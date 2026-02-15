@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>💗 Em</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: #fce4e4;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            background-image: radial-gradient(circle at 10% 30%, rgba(255,200,220,0.4) 0%, transparent 30%),
+                              radial-gradient(circle at 90% 70%, rgba(255,180,200,0.3) 0%, transparent 40%);
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 680px;
+            height: 85vh;
+            background-color: #ffe4e9;
+            border-radius: 36px 36px 30px 30px;
+            box-shadow: 0 20px 30px rgba(200,100,120,0.25), 0 8px 20px rgba(255,120,140,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(2px);
+            border: 1px solid #ffb7c5;
+        }
+
+        .chat-header {
+            background: #ffb3c6;
+            color: #4d2e3b;
+            padding: 16px 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 2px solid #ff9eb2;
+            box-shadow: 0 2px 10px #ffc0cb70;
+        }
+
+        .chat-header .avatar-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chat-header .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #b3405a;
+            box-shadow: 0 4px 8px rgba(255,120,140,0.4);
+            border: 2px solid #ffe2e9;
+        }
+
+        .chat-header .avatar.tb {
+            font-size: 1rem;
+            letter-spacing: -0.5px;
+            background: #ffe2e9;
+            color: #a53f5a;
+        }
+
+        .header-info {
+            flex: 1;
+        }
+
+        .header-info h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #6d2e44;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .header-info p {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            color: #823e55;
+            margin-top: 2px;
+            letter-spacing: 0.3px;
+        }
+
+        .chat-header h3::after {
+            content: " ";
+            font-size: 1.2rem;
+        }
+
+        /* ===== KHU VỰC TIN NHẮN ===== */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 16px 16px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: #ffecf0;
+            scroll-behavior: auto;
+        }
+
+        .message-row {
+            display: flex;
+            width: 100%;
+            align-items: flex-end; /* Căn avatar với mép dưới bubble */
+            gap: 8px;
+        }
+
+        .message-row.left {
+            justify-content: flex-start;
+        }
+
+        .message-row.right {
+            justify-content: flex-end;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            overflow: hidden; /* để ảnh tròn */
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px #ffb0c0;
+            border: 2px solid white;
+            background: #ffe2e9; /* fallback */
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* ảnh phủ kín khung */
+            display: block;
+        }
+
+        .message-content {
+            display: flex;
+            flex-direction: column;
+            max-width: 75%;
+        }
+
+        .sender-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #b34a63;
+            margin-bottom: 4px;
+            margin-left: 6px;
+            letter-spacing: 0.2px;
+            display: flex;
+            align-items: center;
+            line-height: 1.3;
+        }
+
+        .right .sender-name {
+            justify-content: flex-end;
+            margin-right: 6px;
+            margin-left: 0;
+        }
+
+        .sender-name::after {
+            content: "";
+            font-size: 0.7rem;
+            margin-left: 5px;
+            opacity: 0.9;
+        }
+
+        .right .sender-name::before {
+            content: "❤️";
+            font-size: 0.7rem;
+            margin-right: 5px;
+            opacity: 0.9;
+        }
+        .right .sender-name::after {
+            content: none;
+        }
+
+        .bubble {
+            padding: 12px 18px;
+            font-size: 1rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+            box-shadow: 0 4px 8px rgba(255,150,170,0.15);
+            border: 1px solid rgba(255,255,255,0.7);
+            width: fit-content;
+            min-width: 60px;
+        }
+
+        .left .bubble {
+            background-color: #ffffff;
+            border-radius: 22px 22px 22px 8px;
+            color: #4d2e3b;
+            border: 1px solid #ffcad4;
+        }
+
+        .right .bubble {
+            background-color: #ffd9e4;
+            border-radius: 22px 22px 8px 22px;
+            color: #542e3b;
+            border: 1px solid #ffb7c5;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 5px;
+        }
+        .chat-messages::-webkit-scrollbar-track {
+            background: #ffdae2;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #ffa5b9;
+            border-radius: 20px;
+        }
+
+        @media (max-width: 450px) {
+            .chat-container {
+                height: 92vh;
+                border-radius: 28px 28px 24px 24px;
+            }
+            .message-content {
+                max-width: 85%;
+            }
+            .bubble {
+                padding: 10px 14px;
+                font-size: 0.95rem;
+            }
+            .avatar {
+                width: 38px;
+                height: 38px;
+            }
+            .chat-header .avatar {
+                width: 40px;
+                height: 40px;
+            }
+        }
+        .music-control {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.8rem;
+    opacity: 0.85;
+}
+
+.sound-icon {
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.sound-icon:hover {
+    transform: scale(1.15);
+    opacity: 1;
+}
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="avatar-group">
+                <div class="avatar tb" title="Tiền bối">
+                    <img src="he.png" alt="Tiền bối" onerror="this.style.display='none'; this.parentElement.innerText='TB';">
+                </div>
+                <div class="avatar her" title="Em (tôi)">
+                    <img src="her.png" alt="Em" onerror="this.style.display='none'; this.parentElement.innerText='E';">
+                </div>
+            </div>
+            <div class="header-info">
+                <h3>Tiền bối</h3>
+                <!-- <p>💗 nhắn tin · thương thương ❤️</p> -->
+            </div>
+<div class="music-control">
+    <span class="rose">🌹</span>
+    <span class="sound-icon" onclick="toggleMusic()">🔊</span>
+</div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages"></div>
+    </div>
+
+    <script>
+        (function() {
+            const CHAT_MESSAGES = [
+                { sender: "her", text: "E chào a ạ, e là svi cntt khoá 24. Xin phép e hỏi chút ạ. Đợt thi kết thúc học phần vật lý P1, a ôn như nào để pass qua vậy ạ, nếu mà có tài liệu thì cho e xin vs ạ🥹" },
+                { sender: "he", text: "Ủa, sao có được nick anh vậy🙂" },
+                { sender: "he", text: "Ủa, sao có được nick anh vậy🙂" },
+                { sender: "her", text: "A ko acp face e ạ:((" },
+                { sender: "her", text: "E tg a chảnh cơ :> Nma chảnh thậc" },
+                { sender: "he", text: "thả haha tiếp" },
+                { sender: "her", text: "Cảm ơn a, sau này cx phải xin tài liệu anh nhiều òi" },
+                { sender: "he", text: "Hehehe, Tham gia LCK đi anh nhiệt tình hỗ trợ luôn" },
+                { sender: "her", text: "Avatar oách thế tưởng soái ca nào đi lạc🤩" },
+                { sender: "he", text: "Lần này anh gửi" },
+                { sender: "he", text: "sẽ có điều kiện kèm theo ấy nhớ" },
+                { sender: "her", text: "Nói đi anh" },
+                { sender: "her", text: "Làm ny anh đc nè ;))" },
+                { sender: "he", text: "......" },
+                { sender: "her", text: "Em nói đùa thôi" },
+                { sender: "he", text: "Từ, đùa này vui nha" },
+                { sender: "her", text: "Anh năm mấy r nhỉ ?" },
+                { sender: "he", text: "Ê mà, Hỏi thật là em biết gì về anh ko nhỉ" },
+                { sender: "her", text: "1 người tiền bối, rất giỏi và là tấm gương để nhỏ này noi theo" },
+                { sender: "he", text: "Hôm bữa, lướt đâu thấy ngày sinh của em" },
+                { sender: "he", text: "Xong định tới hôm đấy chúc cho bất ngờ chơi chơi" },
+                { sender: "her", text: "Vẫn bất ngờ mà" },
+                { sender: "he", text: "thế chúc em tuổi 19 vui vẻ và gặp nhiều may mắn🥰" },
+                { sender: "he", text: "tới đây farm hết tất cả các cuộc thi nhé 😍" },
+                { sender: "her", text: "Cảm ơn anh" },
+                { sender: "her", text: "Xúc động quá" },
+                { sender: "her", text: "Anh ơi nào đi học ở lớp nào e dẫn bạn qua chơi zới" },
+                { sender: "her", text: "Nào em qua giao lưu văn nghệ" },
+                { sender: "her", text: "Tuần sau thứ mấy anh trên trường v" },
+                { sender: "her", text: "Tính oánh nhau mà anh" },
+                { sender: "he", text: "Nay anh ở NTĐ cả ngày này, em đi học không" },
+                { sender: "her", text: "Nay ko đi học á a" },
+                { sender: "her", text: "Muốn gặp e lắm hả" },
+                { sender: "her", text: "Hahaa" },
+                { sender: "he", text: "Mình nên xem nội dung video hay là chỉ nghe nhạc" },
+                { sender: "he", text: "Đáng để suy nghĩ" },
+                { sender: "her", text: "Ý là anh dà r ấy" },
+                { sender: "her", text: "Anh này chắc fa từ lúc lọt lòng" },
+                { sender: "her", text: "Có ny chưa để e còn tán" },
+                { sender: "he", text: "Dữ vậy luôn" },
+                { sender: "her", text: "....." },
+                { sender: "her", text: "Cố lên anh ơi" },
+                { sender: "her", text: "Sắp ra trường rồi" },
+                { sender: "he", text: "hmm, cũng sắp rồi. 1 năm rưỡi nữa thôi" },
+                { sender: "he", text: "khi nào em bằng tuổi anh thì anh ra trường" },
+                { sender: "her", text: "Nào tốt nghiệp mời em nhé" },
+                { sender: "her", text: "Lạnh rồi mình cũng nên giữ gìn sk nhé anh, không là các cụ cõng đi mất" },
+                { sender: "he", text: "Học bổng năm nay khắc nghiệt thật!" },
+                { sender: "her", text: "Cho em xin slot xách dép theo anh Duy Việt ạ" },
+                { sender: "he", text: "Hình như là không có ai trong slot hết" },
+                { sender: "he", text: "nghĩa đen 🌚" },
+                { sender: "her", text: "Đồng ý làm ny em ko 🌹" },
+                { sender: "he", text: "Ếhhhh ếh, Thật hả😳" },
+                { sender: "her", text: "Anh này thơ ngây  thậc" },
+                { sender: "her", text: "Chưa gặp lần nào, thôi mình bỏ qua bước đấy vậy" },
+                { sender: "her", text: "Suy nghĩ kĩ r bảo em nhé, em đi học đây" },
+                { sender: "he", text: "Ủa rồi trả lời sao giờ b-)" },
+                { sender: "her", text: "hehe, kệ thoai ae mk happy happy thi" },
+                { sender: "he", text: "Tình huống này chưa ngờ đến được luôn" },
+                { sender: "her", text: "Anh này thơ ngây  thậc" },
+                { sender: "he", text: "Ủa thế giờ rồi sao nhỉ :>>" },
+                { sender: "her", text: "Có lấy hoa ko đây" },
+                { sender: "he", text: "Có nhiều bông hoa ở đây quá" },
+                { sender: "her", text: "Bố mẹ có cấm cửa ko, để em qua tán" },
+                { sender: "he", text: "Điều vui nhất hôm nay của em là gì đấy :>>" },
+                { sender: "her", text: "Nhận hoa đi anh, là vui nhất r" },
+                { sender: "he", text: "Nhiều hoa quá. Chẳng nhẽ nhận tất à" },
+                { sender: "her", text: "Có 1 bông hồng thôi anh" },
+                { sender: "her", text: "Tệp đính kèm là bạn áo đen ấy" },
+                { sender: "he", text: ":)))" },
+                { sender: "her", text: "E nói vui vui v thoi chứ đồng ý là hơi hơi khoai" },
+                { sender: "he", text: "Hụt hẫng :<" },
+                { sender: "her", text: "Nào nào phải từng bước chứ" },
+                { sender: "her", text: "Sắp tới có sk gì ko anh, Em qua tán anh cái" },
+                { sender: "he", text: "Nếu nó là thật thì sao" },
+                { sender: "her", text: "Đồng ý á, thì tuyệt chứ sao anh" },
+                { sender: "her", text: "Thấy anh bận suốt mà, chắc chỉ study date" },
+                { sender: "he", text: "Sao biết là anh bận suốt" },
+                { sender: "her", text: "E hiểu anh hơn anh nghĩ" },
+                { sender: "he", text: "Oh, thế có ai nói em dễ thương, đáng yêu chưa" },
+                { sender: "he", text: "Vì thật LoveLy" },
+                { sender: "her", text: "Ohh, anh này có đồng ý ko để em còn xách dép đi tán nào" },
+                { sender: "her", text: "Sợ anh chê thôi, thì lại phải xách dép đi zề" },
+                { sender: "he", text: "Anh làm passtime thôi mà, Kéo điểm rèn luyện đó" },
+                { sender: "her", text: "Thế cho e xin lịch đi" },
+                { sender: "her", text: "Năm cuối nữa nên bận nữa😄, nhưng ko sao yêu em ko phải lo mấy cái đấy" },
+                { sender: "her", text: "Nma hỏi thật anh muốn tìm hiểu ko" },
+                { sender: "her", text: "Ko lại anh ko bít 🤧, anh chưa sẵn sàng" },
+                { sender: "her", text: "Thì ế hết đời, cũng nên cho bản thân yêu và đc yêu đi anh" },
+                { sender: "he", text: "Ngại" },
+                { sender: "her", text: "Thấy em nói mạnh miệng v thôi chứ e cũng ngại lắm á" },
+                { sender: "he", text: "Theo từng bước giai đoạn, thì giờ là tìm hiểu hả" },
+                { sender: "he", text: "Chắc chưa" },
+                { sender: "her", text: "E thayax thông tin cũng đủ r ý" },
+                { sender: "he", text: "Cũng đủ rồi á" },
+                { sender: "her", text: "Thiệt mà" },
+                { sender: "her", text: "Gặp mặt là run như cà sấy ấy" },
+                { sender: "he", text: "Anh em mình còn chưa gặp nhau lần nào. Lần đầu, chắc sẽ ngại, lần sau thì..." },
+                { sender: "her", text: "Em hiểu mà" },
+                { sender: "he", text: "Hiểu gì cơ :)" },
+                { sender: "her", text: "E tâm lý mà anh, làm ny e là bít lìn" },
+                { sender: "he", text: "Ohh, em ngủ ngon nhé" },
+                { sender: "her", text: "Anh biết tại sao giờ này em còn thức không" },
+                { sender: "he", text: "Vì sao đấy" },
+                { sender: "her", text: "Tại vì là thao thức anh Duy Việt quá nên chưa ngủ đc" },
+                { sender: "he", text: "Ngại thí" },
+                { sender: "her", text: "Nhắn tin với anh e mới buồn ngủ." },
+                { sender: "her", text: "😹 vì mê anh quá mà" },
+                { sender: "he", text: "Tối nay rảnh ko" },
+                { sender: "her", text: "Muốn gặp em thì cứ nói" },
+                { sender: "her", text: "Không phải ngại đâu em biết mà" },
+                { sender: "her", text: "Màu này cho tình cảm" },
+                { sender: "he", text: "tự nhiên thấy màu nền chat thay đổi, hơi bị sock tý" },
+                { sender: "her", text: "Nhìn cho nó hồng hào mà nó đẹp" },
+                { sender: "he", text: "em cũng ngủ ngon nha" },
+                { sender: "her", text: "Em yêu anh, ngủ ngon nha anh yêu" },
+                { sender: "he", text: "Uầy nghe này" },
+                { sender: "her", text: "Đến giai đoạn nào r nhỉ" },
+                { sender: "he", text: "Study date" },
+                { sender: "her", text: "Ko vội đâu anh. Nào sure thì đồng ý sau" },
+                { sender: "he", text: "Đồng ý làm ny anh nhé" },
+                { sender: "her", text: "E đồng ý" },
+                { sender: "he", text: "Yeahhh" }
+            ];
+
+            const container = document.getElementById('chatMessages');
+
+            function renderMessages() {
+                let html = '';
+                CHAT_MESSAGES.forEach((msg) => {
+                    const isHe = msg.sender === 'he';   // tiền bối
+                    const rowClass = isHe ? 'left' : 'right';
+                    const avatarClass = isHe ? 'he' : 'her';
+                    const displayName = isHe ? 'Tiền bối' : 'Em';
+                    const imgSrc = isHe ? 'he.png' : 'her.png';
+
+                    if (isHe) {
+                        html += `
+                            <div class="message-row left">
+                                <div class="avatar ${avatarClass}">
+                                    <img src="${imgSrc}" alt="${displayName}" onerror="this.style.display='none'; this.parentElement.innerText='${isHe ? 'TB' : 'E'}';">
+                                </div>
+                                <div class="message-content">
+                                    <div class="sender-name">${displayName}</div>
+                                    <div class="bubble">${msg.text}</div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div class="message-row right">
+                                <div class="message-content">
+                                    <div class="sender-name">${displayName}</div>
+                                    <div class="bubble">${msg.text}</div>
+                                </div>
+                                <div class="avatar ${avatarClass}">
+                                    <img src="${imgSrc}" alt="${displayName}" onerror="this.style.display='none'; this.parentElement.innerText='${isHe ? 'TB' : 'E'}';">
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+                container.innerHTML = html;
+                // không tự cuộn, giữ ở đầu
+            }
+
+            renderMessages();
+        })();
+    </script>
+    <audio id="bgMusic" loop>
+    <source src="chuctet1.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+    const music = document.getElementById("bgMusic");
+    const icon = document.querySelector(".sound-icon");
+
+    music.volume = 0.3;
+
+    music.addEventListener("play", () => {
+        icon.innerText = "🔇";
+    });
+
+    music.addEventListener("pause", () => {
+        icon.innerText = "🔊";
+    });
+
+    function toggleMusic() {
+        if (music.paused) {
+            music.play();
+        } else {
+            music.pause();
+        }
+    }
+
+    // Thử play lại nếu bị chặn
+    window.addEventListener("load", () => {
+        music.play().catch(() => {
+            console.log("Autoplay bị chặn, cần user interaction");
+        });
+    });
+</script>
+</body>
+</html>
