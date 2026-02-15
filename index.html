@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>💗 Em</title>
+    <link rel="icon" type="image/png" href="./Picture1.png" />
     <style>
         * {
             margin: 0;
@@ -491,11 +492,20 @@
     }
 
     // Thử play lại nếu bị chặn
-    window.addEventListener("load", () => {
-        music.play().catch(() => {
-            console.log("Autoplay bị chặn, cần user interaction");
+    let hasInteracted = false;
+
+function playOnFirstTouch() {
+    if (!hasInteracted) {
+        music.play().then(() => {
+            hasInteracted = true;
+        }).catch(err => {
+            console.log("Không thể autoplay:", err);
         });
-    });
+    }
+}
+
+document.addEventListener("click", playOnFirstTouch);
+document.addEventListener("touchstart", playOnFirstTouch);
 </script>
 </body>
 </html>
