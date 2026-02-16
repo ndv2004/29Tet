@@ -472,16 +472,13 @@
 <script>
     const music = document.getElementById("bgMusic");
     const icon = document.querySelector(".sound-icon");
+    const chatBox = document.getElementById("chatMessages");
 
     music.volume = 0.3;
 
-    music.addEventListener("play", () => {
-        icon.innerText = "🔇";
-    });
-
-    music.addEventListener("pause", () => {
-        icon.innerText = "🔊";
-    });
+    function updateIcon() {
+        icon.innerText = music.paused ? "🔊" : "🔇";
+    }
 
     function toggleMusic() {
         if (music.paused) {
@@ -489,23 +486,32 @@
         } else {
             music.pause();
         }
+        updateIcon();
     }
 
-    // Thử play lại nếu bị chặn
     let hasInteracted = false;
 
-function playOnFirstTouch() {
-    if (!hasInteracted) {
-        music.play().then(() => {
-            hasInteracted = true;
-        }).catch(err => {
-            console.log("Không thể autoplay:", err);
-        });
+    function playOnFirstInteraction() {
+        if (!hasInteracted) {
+            music.play().then(() => {
+                hasInteracted = true;
+                updateIcon();
+            }).catch(() => {});
+            
+            document.removeEventListener("click", playOnFirstInteraction);
+            document.removeEventListener("touchstart", playOnFirstInteraction);
+            chatBox.removeEventListener("scroll", playOnFirstInteraction);
+        }
     }
-}
 
-document.addEventListener("click", playOnFirstTouch);
-document.addEventListener("touchstart", playOnFirstTouch);
+    document.addEventListener("click", playOnFirstInteraction);
+    document.addEventListener("touchstart", playOnFirstInteraction);
+    chatBox.addEventListener("scroll", playOnFirstInteraction);
+
+    music.addEventListener("play", updateIcon);
+    music.addEventListener("pause", updateIcon);
+
+    updateIcon();
 </script>
 </body>
 </html>
